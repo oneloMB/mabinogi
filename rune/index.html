@@ -1,0 +1,419 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>룬 승급 시뮬레이션</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: sans-serif;
+            background: radial-gradient(circle, rgb(26,27,29), rgb(11,14,41));
+            color: rgb(129, 164, 183);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        .box-container-wrapper {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 10px;
+        }
+
+        .box-container {
+            display: flex;
+            gap: 20px;
+        }
+
+        .box {
+            width: 100px;
+            height: 100px;
+            background-size: cover;
+            background-position: center;
+            transition: transform 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+
+            .box:hover {
+                transform: scale(1.1);
+            }
+
+        .arrow-container {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            margin-left: 10px;
+            margin-top: 60px;
+        }
+
+        .triangle {
+            width: 0;
+            height: 0;
+            border-top: 20px solid transparent;
+            border-bottom: 20px solid transparent;
+            border-left: 30px solid #00ff00;
+            opacity: 0.3;
+            animation: pulse 1.5s infinite;
+            filter: drop-shadow(0 0 5px #00ff00);
+            transition: filter 0.3s ease;
+        }
+
+            .triangle:nth-child(1) {
+                animation-delay: 0s;
+            }
+
+            .triangle:nth-child(2) {
+                animation-delay: 0.3s;
+            }
+
+            .triangle:nth-child(3) {
+                animation-delay: 0.6s;
+            }
+
+        @keyframes pulse {
+            0% {
+                opacity: 0.3;
+                filter: drop-shadow(0 0 2px #00ff00);
+            }
+
+            50% {
+                opacity: 1;
+                filter: drop-shadow(0 0 10px #00ff00);
+            }
+
+            100% {
+                opacity: 0.3;
+                filter: drop-shadow(0 0 2px #00ff00);
+            }
+        }
+
+        .result-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-left: 20px;
+            margin-top: 20px;
+        }
+
+        .resultbox {
+            width: 100px;
+            height: 100px;
+            background-size: cover;
+            background-position: center;
+            border: none;
+        }
+
+        .item-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 30px;
+        }
+
+            .item-box img {
+                width: 100px;
+                height: 100px;
+                cursor: pointer;
+                transition: transform 0.2s;
+            }
+
+                .item-box img:hover {
+                    transform: scale(1.1);
+                }
+
+        .promote-button {
+            width: 340px;
+            padding: 14px 20px;
+            background-color: rgb(30, 99, 130);
+            color: rgb(129, 164, 183);
+            border: none;
+            border-radius: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+            .promote-button:hover {
+                transform: scale(1.05);
+            }
+
+        .success-rate {
+            margin-top: 10px;
+            font-size: 18px;
+            color: white;
+        }
+
+            .success-rate strong {
+                font-weight: bold;
+                font-size: 28px;
+                color: white;
+            }
+
+        .result-message {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            text-align: center;
+            background-color: rgb(95, 138, 186);
+            color: white;
+            padding: 25px;
+            font-size: 22px;
+            font-weight: bold;
+            display: none;
+            animation: fadeInOut 2s ease-in-out forwards;
+        }
+
+        @keyframes fadeInOut {
+            0% {
+                opacity: 0;
+            }
+
+            20% {
+                opacity: 1;
+            }
+
+            80% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+
+        .used-box-container {
+            display: flex;
+            gap: 20px;
+            margin-top: 30px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .stats-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 50px;
+            margin-top: 20px;
+        }
+
+        .stats, .legendary-counter {
+            color: white;
+            font-size: 18px;
+            text-align: center;
+        }
+
+            .stats span, .legendary-counter span {
+                font-weight: bold;
+                color: #00ffcc;
+            }
+
+            .legendary-counter div {
+                margin: 2px 0;
+            }
+
+        .used-box {
+            width: 100px;
+            height: 100px;
+            background-size: cover;
+            background-position: center;
+            border: none;
+            position: relative;
+        }
+
+            .used-box img {
+                width: 100px;
+                height: 100px;
+                cursor: pointer;
+            }
+
+            .used-box .counter {
+                position: absolute;
+                bottom: 10px;
+                right: 10px;
+                font-size: 20px;
+                font-weight: bold;
+                color: white;
+            }
+
+            .used-box .close-btn {
+                font-size: 32px;
+                color: red;
+                font-weight: bold;
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                cursor: pointer;
+            }
+    </style>
+</head>
+<body>
+
+    <audio id="promoteSound" src="https://www.soundjay.com/button/button-3.wav" preload="auto"></audio>
+
+    <h2>룬 승급 시뮬레이션</h2>
+
+    <div id="resultMessage" class="result-message"></div>
+
+    <div class="box-container-wrapper">
+        <div class="box-container">
+            <div class="box" id="itembox1"></div>
+            <div class="box" id="itembox2"></div>
+            <div class="box" id="itembox3"></div>
+        </div>
+
+        <div class="arrow-container">
+            <div class="triangle"></div>
+            <div class="triangle"></div>
+            <div class="triangle"></div>
+        </div>
+
+        <div class="result-container">
+            <div class="resultbox" id="resultbox"
+                 style="background-image: url('https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbuL4Dy%2FbtsNjLhrCpK%2F0VqEFUwkhk3kZkJFP9jGkk%2Fimg.png');">
+            </div>
+        </div>
+    </div>
+
+    <div class="success-rate">
+        승급 성공률 <strong>10%</strong>
+    </div>
+
+    <div class="item-box">
+        <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FKqd2e%2FbtsNm3HVce5%2FWYXze7L7g6ZrkkFRCLAYj0%2Fimg.png" id="item" onclick="addItemToBoxes()">
+        <button class="promote-button" onclick="promote()" id="promoteButton" disabled>승급</button>
+    </div>
+
+    <div class="stats-container">
+        <div class="stats">
+            <p>시행 횟수: <span id="attempts">0</span>회</p>
+            <p>성공 횟수: <span id="successes">0</span>회</p>
+            <p>예상 성공 편차: <span id="deviation">0%</span></p>
+        </div>
+
+        <div class="legendary-counter" id="legendaryCounter"></div>
+    </div>
+
+    <div class="used-box-container" id="usedBoxContainer">
+        <div class="used-box">
+            <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FKqd2e%2FbtsNm3HVce5%2FWYXze7L7g6ZrkkFRCLAYj0%2Fimg.png" />
+            <span class="counter" id="usedBoxCounter">X 0</span>
+        </div>
+    </div>
+
+    <script>
+        const readyImage = "https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FRyebY%2FbtsNmL1Mwzc%2FuELUPQyQDPr2EV2RzkpNK1%2Fimg.png";
+        const preparedImage = "https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbuL4Dy%2FbtsNjLhrCpK%2F0VqEFUwkhk3kZkJFP9jGkk%2Fimg.png";
+        const itemImage = "https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FKqd2e%2FbtsNm3HVce5%2FWYXze7L7g6ZrkkFRCLAYj0%2Fimg.png";
+
+        const legendaryRunes = ["굳건함+", "날쌤+", "강렬함+", "광폭함+", "현란함", "지혜로움", "냉혹함"];
+        const legendaryRunesCount = Array(legendaryRunes.length).fill(0);
+
+        const boxCount = 3;
+        let currentBoxIndex = 0;
+        const boxes = [];
+        let usedBoxCount = 0;
+        let totalAttempts = 0;
+        let successCount = 0;
+
+        window.onload = () => {
+            for (let i = 0; i < boxCount; i++) {
+                const box = document.getElementById(`itembox${i + 1}`);
+                boxes.push(box);
+                box.style.backgroundImage = i === 0 ? `url(${preparedImage})` : `url(${readyImage})`;
+            }
+            updateLegendaryCounter();
+        };
+
+        function addItemToBoxes() {
+            if (currentBoxIndex < boxCount) {
+                playClickSound();
+                boxes[currentBoxIndex].style.backgroundImage = `url(${itemImage})`;
+                currentBoxIndex++;
+                if (currentBoxIndex < boxCount) {
+                    boxes[currentBoxIndex].style.backgroundImage = `url(${preparedImage})`;
+                }
+            }
+            if (currentBoxIndex === boxCount) {
+                document.getElementById("promoteButton").disabled = false;
+            }
+        }
+
+        function playClickSound() {
+            const audio = new Audio("C:/rune/Csound.mp3"); // 여기에 실제 mp3 경로 입력
+            audio.play();
+        }
+
+        function promote() {
+            const promoteSound = document.getElementById('promoteSound');
+            promoteSound.currentTime = 0;
+            promoteSound.play();
+
+            const resultMessage = document.getElementById('resultMessage');
+            resultMessage.style.display = 'block';
+            resultMessage.style.animation = 'none';
+            void resultMessage.offsetWidth;
+            resultMessage.style.animation = null;
+
+            const chance = Math.random();
+            let message = "전설룬 승급에 실패했습니다.";
+
+            if (chance <= 0.1) {
+                const randomIndex = Math.floor(Math.random() * legendaryRunes.length);
+                const chosenRune = legendaryRunes[randomIndex];
+                legendaryRunesCount[randomIndex]++;
+                message = `"${chosenRune}"을(를) 획득했습니다!`;
+                successCount++;
+                updateLegendaryCounter();
+            }
+
+            totalAttempts++;
+            updateStats();
+            resultMessage.innerText = message;
+
+            document.getElementById("promoteButton").disabled = true;
+            currentBoxIndex = 0;
+            for (let i = 0; i < boxCount; i++) {
+                boxes[i].style.backgroundImage = i === 0 ? `url(${preparedImage})` : `url(${readyImage})`;
+            }
+        }
+
+        function updateStats() {
+            const successRate = (successCount / totalAttempts) * 100;
+            document.getElementById("attempts").innerText = totalAttempts;
+            document.getElementById("successes").innerText = successCount;
+            document.getElementById("deviation").innerText = `${successRate.toFixed(2)}%`;
+
+            usedBoxCount += 3;
+            document.getElementById("usedBoxCounter").innerText = `X ${usedBoxCount}`;
+        }
+
+        function updateLegendaryCounter() {
+            const container = document.getElementById("legendaryCounter");
+            container.innerHTML = "";
+            legendaryRunes.forEach((rune, index) => {
+                const div = document.createElement("div");
+                div.textContent = `${rune}: ${legendaryRunesCount[index]}`;
+                container.appendChild(div);
+            });
+        }
+    </script>
+</body>
+</html>
